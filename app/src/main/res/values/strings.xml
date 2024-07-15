@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Viewer phone</string>
+    <string name="notification_channel_id">12345</string>
+</resources>
