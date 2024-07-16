@@ -1,26 +1,34 @@
 package com.codewithkael.webrtcscreenshare.ui
 
+import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.codewithkael.webrtcscreenshare.R
 import com.codewithkael.webrtcscreenshare.databinding.ActivityMainBinding
 import com.codewithkael.webrtcscreenshare.repository.MainRepository
 import com.codewithkael.webrtcscreenshare.service.WebrtcService
 import com.codewithkael.webrtcscreenshare.service.WebrtcServiceRepository
+import com.jenorg.webrtcscreenshare.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.MediaStream
 import org.webrtc.RTCStats
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), MainRepository.Listener {
 
     private var username:String?=null
     lateinit var views:ActivityMainBinding
-
+    
+    lateinit var notificationManager: NotificationManager
+    @Inject lateinit var context: Context
+    
     @Inject lateinit var webrtcServiceRepository: WebrtcServiceRepository
     private val capturePermissionRequestCode = 1
 
@@ -28,6 +36,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
         super.onCreate(savedInstanceState)
         views= ActivityMainBinding.inflate(layoutInflater)
         setContentView(views.root)
+        notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         init()
 
     }
@@ -37,6 +46,19 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
         if (username.isNullOrEmpty()){
             finish()
         }
+        
+        val notificationHelper = NotificationHelper(this) // Assuming you have an instance
+        
+        val notification = notificationHelper.buildBasicNotification(
+            context = this,
+            title = "My App Notification",
+            message = "This is a basic notification example",
+            smallIcon = R.drawable.ic_launcher_foreground // Replace with your icon resource
+        )
+        
+        notificationManager.notify(12345, notification) // Use a unique notification ID
+        
+        
         WebrtcService.surfaceView = views.surfaceView
         WebrtcService.listener = this
         webrtcServiceRepository.startIntent(username!!)

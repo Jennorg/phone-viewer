@@ -27,9 +27,8 @@ class SocketClient @Inject constructor(
     var listener:Listener?=null
     fun init(username:String){
         this.username = username
-
-        webSocket= object : WebSocketClient(URI("ws://192.168.250.5:3000")){
-            override fun onOpen(handshakedata: ServerHandshake?) {
+        
+        webSocket= object : WebSocketClient(URI("wss://servidor-production-762c.up.railway.app")){            override fun onOpen(handshakedata: ServerHandshake?) {
                 sendMessageToSocket(
                     DataModel(
                         type = DataModelType.SignIn,
